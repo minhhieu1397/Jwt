@@ -4,8 +4,8 @@ namespace App\Services;
 
 class Base64
 {
-    private $_base64hash = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/'; /*这是Base64编码使用的标准字典*/
-    private $_DecodeTable = array( /* 这是php源码中使用的解码表,包含了256个字符对应的编码 */
+    private $_base64hash = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
+    private $_DecodeTable = array(
         -2, -2, -2, -2, -2, -2, -2, -2, -2, -1, -1, -2, -2, -1, -2, -2,
         -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2,
         -1, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, 62, -2, -2, -2, 63,
@@ -87,19 +87,14 @@ class Base64
         $i = 0;
         while( ($len <= $length) ) {
             $ch = $str[$len++];
-            if ($ch == '=') { // 当前一个字符是“=”号
-                /*
-                先说明一个概念：在解码时，4个字符为一组进行一轮字符匹配。
-                    如果某一轮匹配的第二个是“=”且第三个字符不是“=”，说明这个带解析字符串不合法，直接返回空
-                */
+            if ($ch == '=') {
                 if ($str[$len] != '=' && (($i % 4) == 1)) {
                     return NULL;
                 }
                 continue;
             }
             $ch = $this->_DecodeTable[ord($ch)];
-            // 下面这连个条件，只有 ch < 0 会起作用，ch == -2 永远不会起作用，即所有不合法的字符均跳过。
-            if ($ch < 0 || $ch == -1) { /* a space or some other separator character, we simply skip over */
+            if ($ch < 0 || $ch == -1) {
                 continue;
             } else if ($ch == -2) {
                 return NULL;
